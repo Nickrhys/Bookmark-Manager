@@ -7,5 +7,5 @@ gem 'dm-postgres-adapter'
 group :development, :test do 
 	gem 'database_cleaner'
 	gem 'capybara'
-	gem "rspec"
+	gem 'rspec'
 end
