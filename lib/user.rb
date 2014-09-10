@@ -12,7 +12,8 @@ class User
 	attr_reader :password
 	attr_accessor :password_confirmation
 
-	validates_confirmation_of :password
+	validates_confirmation_of :password, message: "There's already a page of that title in this section"
+	validates_uniqueness_of :email, message: "Get a new email"
 
 	def password=(password)	
 		@password = password
