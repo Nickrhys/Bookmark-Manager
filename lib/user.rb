@@ -5,15 +5,15 @@ class User
 	include DataMapper::Resource 
 
 	property :id, Serial
-	property :email, String
+	property :email, String, :unique => true
 
 	property :password_digest, Text
 
 	attr_reader :password
 	attr_accessor :password_confirmation
 
-	validates_confirmation_of :password, message: "There's already a page of that title in this section"
-	validates_uniqueness_of :email, message: "Get a new email"
+	validates_confirmation_of :password, message: "Sorry, your passwords don't match"
+	validates_uniqueness_of :email, message: "This email is already taken"
 
 	def password=(password)	
 		@password = password
