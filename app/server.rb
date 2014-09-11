@@ -1,15 +1,14 @@
 require 'sinatra'
 require 'data_mapper'
 require 'rack-flash'
-require './lib/link' # this needs to be done after datamapper is initialised
-require './lib/tag'
-require './lib/user'
+
 require_relative 'helpers/application'
 require_relative 'data_mapper_setup'
 
 enable :sessions
 set :session_secret, 'my unique encryprtion key!'
 use Rack::Flash
+use Rack::MethodOverride
 
 get '/' do
 	@links = Link.all 
@@ -34,28 +33,11 @@ get '/users/new'  do
 	@user = User.new
 	erb :"users/new"
 end
-
-	get '/sessions/new' do
-		erb :"sessions/new"
-	end
-
-	post '/sessions' do
-		email, password = params[:email], params[:password]
-		user = User.authenticate(email, password)
-		if user
-			session[:user_id] = user.id
-			redirect to('/')
-		else
-			flash[:errors] = ["The email or password is incorrect"]
-			erb :"sessions/new"
-		end
-	end
 	
 post '/users'  do
 	@user = User.new(:email => params[:email],
 					:password => params[:password],
 					:password_confirmation => params[:password_confirmation])
-		
 	if @user.save
 		session[:user_id] = @user.id
 		redirect to('/')
@@ -67,5 +49,27 @@ post '/users'  do
 		erb :"users/new"
 	end
 
+end
 
+get '/sessions/new' do
+	erb :"sessions/new"
+end
+
+post '/sessions' do
+	email, password = params[:email], params[:password]
+	user = User.authenticate(email, password)
+	if user
+		session[:user_id] = user.id
+		redirect to('/')
+	else
+		flash[:errors] = ["The email or password is incorrect"]
+		erb :"sessions/new"
+	end
+
+end
+
+delete '/sessions' do
+	flash[:notice] = "Good Bye!"
+	session[:user_id] = nil
+	redirect to('/')
 end
