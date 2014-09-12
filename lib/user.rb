@@ -6,8 +6,10 @@ class User
 
 	property :id, Serial
 	property :email, String, :unique => true
-
 	property :password_digest, Text
+	property :password_token, Text, unique:true
+	property :password_token_timestamp, DateTime
+
 
 	attr_reader :password
 	attr_accessor :password_confirmation

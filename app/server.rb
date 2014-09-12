@@ -48,7 +48,24 @@ post '/users'  do
 		flash.now[:errors] = @user.errors.full_messages
 		erb :"users/new"
 	end
+end
 
+get '/users/reset_password' do
+	erb :"users/reset_password_request"
+end
+
+post '/users/reset_password' do
+	user = User.first(:email => params['email'])
+	# avoid having to memorise ascii codes
+	user.password_token = (1..64).map{('A'..'Z').to_a.sample}.join
+	user.password_token_timestamp = Time.new
+	user.save!
+	flash[:errors] = ["We have sent you your password reset token. Please check your email"]
+end
+
+get "/users/reset_password/:token" do
+	user = User.first(:token => password_token)
+	# erb :
 end
 
 get '/sessions/new' do
